@@ -31,7 +31,7 @@ router.use(function (req,res,next) {
 });
 
 // Get all the pets
-router.get("/pets/",function(req,res){
+router.get("/pets",function(req,res){
   success(res, 200, _.values(pets));
 });
 
@@ -46,7 +46,7 @@ router.get("/pets/:id",function(req,res){
 });
 
 // Create a pet
-router.post("/pets/",function(req,res){
+router.post("/pets",function(req,res){
   var pet = req.body;
   if (pet == null) {
     return error(res, 400, "No body sent !");
