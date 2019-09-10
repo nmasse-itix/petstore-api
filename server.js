@@ -1,17 +1,28 @@
 // Dependencies
 var express = require("express");
+var cors = require('cors')
 var _ = require("underscore");
 var bodyParser = require('body-parser');
 var util = require('util');
 
+// CORS Setup
+var corsConfig = {
+  "origin": true,
+  "credentials": true
+};
+
 // ExpressJS Setup
 var app = express();
+app.use(cors(corsConfig)); // Handle CORS requests
 var router = express.Router();
 var port = 8080;
 
 var pets = { "1": {"id":1,"name":"Eclair","tag":"cat"}, 
              "2": {"id":2,"name":"Cannelle","tag":"cat"} };
 var counter = 3;
+
+// Handle CORS pre-flight request
+app.options('*', cors(corsConfig));
 
 // Log every request
 router.use(function (req,res,next) {
