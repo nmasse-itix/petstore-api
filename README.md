@@ -9,11 +9,15 @@ oc expose svc/petstore-api --hostname=petstore-api.app.itix.fr
 ```
 
 ```sh
-3scale remote add -k 3scale-2.6 https://83aad0fd501707ebeca3ae03959bd4f7f35d4dba2c98b2f2008cc401fe235aff@3scale-admin.3scale-ci-26.app.itix.fr/
+3scale remote add -k 3scale-2.6 https://[REDACTED]@3scale-admin.3scale-ci-26.app.itix.fr/
 oc create secret generic 3scale-toolbox -n "petstore-api" --from-file="$HOME/.3scalerc.yaml"
 ```
 
 Configure your APIcast gateways [to enable the CORS policy in the Global Policy Chain](https://www.itix.fr/blog/enable-global-policies-apicast/).
+
+```sh
+oc new-build --strategy=pipeline https://github.com/nmasse-itix/petstore-api.git -e PRIVATE_BASE_URL=http://petstore-api.app.itix.fr -e NAMESPACE=petstore-api -e TARGET_INSTANCE=3scale-2.6 -e SECRET_NAME=3scale-toolbox -e OIDC_ISSUER_ENDPOINT=https://3scale:[REDACTED]@sso.app.itix.fr/auth/realms/3scale-26 -e DISABLE_TLS_VALIDATION=yes -e MOCK_SERVER=https://microcks.app.itix.fr -e MOCK_URL=/rest/test/0.9.0
+```
 
 ## List all pets
 
