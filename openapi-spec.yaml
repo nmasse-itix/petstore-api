@@ -212,9 +212,14 @@ components:
         message:
           type: string
   securitySchemes:
-    api-key:
-      type: apiKey
-      name: api-key
-      in: header
+    oidc:
+      flows:
+        clientCredentials:
+          tokenUrl: https://filled.later/
+          refreshUrl: https://filled.later/
+          scopes:
+            openid: openid
+      type: oauth2
 security:
-- api-key: []
+- oidc:
+  - openid
