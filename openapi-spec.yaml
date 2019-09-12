@@ -2,7 +2,7 @@
 openapi: 3.0.2
 info:
   title: Petstore
-  version: 1.0.0
+  version: 2.0.0
   description: |-
     A sample API that uses a petstore as an example to demonstrate features
     in the OpenAPI 3.0 specification
@@ -139,6 +139,22 @@ paths:
       description: |-
         Returns a user based on a single ID, if the user does not have
         access to the pet
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: OK
+      operationId: UpdatePet
+      summary: Update a Pet
     delete:
       parameters:
       - name: id
@@ -196,9 +212,14 @@ components:
         message:
           type: string
   securitySchemes:
-    api-key:
-      type: apiKey
-      name: api-key
-      in: header
+    oidc:
+      flows:
+        clientCredentials:
+          tokenUrl: https://filled.later/
+          refreshUrl: https://filled.later/
+          scopes:
+            openid: openid
+      type: oauth2
 security:
-- api-key: []
+- oidc:
+  - openid
