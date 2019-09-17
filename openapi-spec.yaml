@@ -2,7 +2,7 @@
 openapi: 3.0.2
 info:
   title: Petstore
-  version: 0.9.0
+  version: 1.0.0
   description: |-
     A sample API that uses a petstore as an example to demonstrate features
     in the OpenAPI 3.0 specification
@@ -195,3 +195,10 @@ components:
           type: integer
         message:
           type: string
+  securitySchemes:
+    api-key:
+      type: apiKey
+      name: api-key
+      in: header
+security:
+- api-key: []
