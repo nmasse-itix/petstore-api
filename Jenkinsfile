@@ -25,21 +25,15 @@ node("nodejs") {
 
     // Install pre-requisites
     sh """
-    npm install -g api-spec-converter
     curl -L -o /tmp/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
     chmod 755 /tmp/jq
-    """
-
-    // Convert OpenAPI 3.0 to Swagger 2.0
-    sh """
-    api-spec-converter -f openapi_3 -t swagger_2 openapi-spec.yaml |/tmp/jq 'walk( if type == "object" then del(.examples) else . end )' > swagger.json 
     """
   }
 
   stage("Deploy API in Dev") {
     // Prepare
     service = toolbox.prepareThreescaleService(
-        openapi: [filename: "swagger.json" ],
+        openapi: [filename: "openapi-spec.yaml" ],
         environment: [ baseSystemName: "petstore",
                        environmentName: "dev",
                        oidcIssuerEndpoint: params.OIDC_ISSUER_ENDPOINT,
@@ -48,7 +42,7 @@ node("nodejs") {
                        privateBaseUrl: params.PRIVATE_BASE_URL ],
         toolbox: [ openshiftProject: params.NAMESPACE,
                    destination: params.TARGET_INSTANCE,
-                   image: "quay.io/redhat/3scale-toolbox:master", // TODO: remove me once the final image is released
+                   image: "quay.io/redhat/3scale-toolbox:v0.16.2",
                    activeDeadlineSeconds: 180,
                    insecure: params.DISABLE_TLS_VALIDATION == "yes",
                    secretName: params.SECRET_NAME],
@@ -90,7 +84,7 @@ node("nodejs") {
   stage("Deploy API in Test") {
     // Prepare
     service = toolbox.prepareThreescaleService(
-        openapi: [filename: "swagger.json" ],
+        openapi: [filename: "openapi-spec.yaml" ],
         environment: [ baseSystemName: "petstore",
                        environmentName: "test",
                        oidcIssuerEndpoint: params.OIDC_ISSUER_ENDPOINT,
@@ -99,7 +93,7 @@ node("nodejs") {
                        privateBaseUrl: params.PRIVATE_BASE_URL ],
         toolbox: [ openshiftProject: params.NAMESPACE,
                    destination: params.TARGET_INSTANCE,
-                   image: "quay.io/redhat/3scale-toolbox:master", // TODO: remove me once the final image is released
+                   image: "quay.io/redhat/3scale-toolbox:v0.16.2",
                    activeDeadlineSeconds: 180,
                    insecure: params.DISABLE_TLS_VALIDATION == "yes",
                    secretName: params.SECRET_NAME],
@@ -132,7 +126,7 @@ node("nodejs") {
   stage("Deploy API in Prod") {
     // Prepare
     service = toolbox.prepareThreescaleService(
-        openapi: [filename: "swagger.json" ],
+        openapi: [filename: "openapi-spec.yaml" ],
         environment: [ baseSystemName: "petstore",
                        environmentName: "prod",
                        oidcIssuerEndpoint: params.OIDC_ISSUER_ENDPOINT,
@@ -141,7 +135,7 @@ node("nodejs") {
                        privateBaseUrl: params.PRIVATE_BASE_URL ],
         toolbox: [ openshiftProject: params.NAMESPACE,
                    destination: params.TARGET_INSTANCE,
-                   image: "quay.io/redhat/3scale-toolbox:master", // TODO: remove me once the final image is released
+                   image: "quay.io/redhat/3scale-toolbox:v0.16.2",
                    activeDeadlineSeconds: 180,
                    insecure: params.DISABLE_TLS_VALIDATION == "yes",
                    secretName: params.SECRET_NAME],
